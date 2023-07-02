@@ -16,7 +16,26 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             List {
+                Section {
+                    VStack {
+                        Text(rootWord == "" ? "Press start" : rootWord)
+                            .font(.title2.bold())
+                            .frame(maxWidth: 430)
+                    }
+                    .listRowBackground(Color(CGColor(red: 240, green: 240, blue: 246, alpha: 0)))
+                    
+                    TextField("Enter your word", text: $newWord)
+                        .textInputAutocapitalization(.none)
+                }
                 
+                Section("Typed Words:") {
+                    ForEach(usedWord, id: \.self) { word in
+                        HStack{
+                            Image(systemName: "\(word.count).circle.fill")
+                            Text(word)
+                        }
+                    }
+                }
             }
             .navigationTitle("Word Scramble")
             .toolbar {
@@ -24,7 +43,17 @@ struct ContentView: View {
                     gameIsOn = true
                 })
             }
+        }.onSubmit(addNewWord)
+    }
+    
+    func addNewWord() {
+        let answer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        guard answer.count > 0 else { return }
+        
+        withAnimation {
+            usedWord.insert(answer, at: 0)
         }
+        newWord = ""
     }
 }
 
