@@ -8,9 +8,18 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var gameIsOn = false
     var body: some View {
-        List(0..<10) {
-            Text("Texto de Exemplo \($0 + 1)")
+        NavigationView {
+            List {
+                
+            }
+            .navigationTitle("Word Scramble")
+            .toolbar {
+                Button("Start Game", action: {
+                    gameIsOn = true
+                })
+            }
         }
     }
 }
