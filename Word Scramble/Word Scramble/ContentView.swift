@@ -55,6 +55,18 @@ struct ContentView: View {
         }
         newWord = ""
     }
+    
+    func startGame() {
+        if let startURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
+            if let content = try? String(contentsOf: startURL) {
+                let allWords = content.components(separatedBy: "\n")
+                rootWord = allWords.randomElement() ?? "Unknown Value"
+                return
+            }
+        }
+        
+        fatalError("Sorry, but could not load start.txt from bundle.")
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
