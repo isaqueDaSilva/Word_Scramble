@@ -9,6 +9,10 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var gameIsOn = false
+    @State private var usedWord = [String]()
+    @State private var rootWord = ""
+    @State private var newWord = ""
+    
     var body: some View {
         NavigationView {
             List {
