@@ -16,18 +16,18 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             List {
-                VStack {
+                Section {
                     Text(gameIsOn ? rootWord : "Press the Start Button!")
                         .frame(maxWidth: 430)
                         .font(.headline.bold())
                         .multilineTextAlignment(.center)
-                }
-                .listRowBackground(Color(CGColor(red: 240, green: 246, blue: 246, alpha: 0)))
-                
-                HStack{
-                    TextField("Enter your word", text: $newWord)
-                        .textInputAutocapitalization(.never)
-                    Image(systemName: "\(newWord.count).circle")
+                        .listRowBackground(Color(CGColor(red: 240, green: 246, blue: 246, alpha: 0)))
+                    
+                    HStack{
+                        TextField("Enter your word", text: $newWord)
+                            .textInputAutocapitalization(.never)
+                        Image(systemName: "\(newWord.count).circle")
+                    }
                 }
                 
                 Section("Typed Words:") {
@@ -75,6 +75,10 @@ struct ContentView: View {
             }
         }
         fatalError("Unable to load file start.txt from bundle.")
+    }
+    
+    func isOriginal(word: String) -> Bool {
+        usedWord.contains(word)
     }
 }
 
