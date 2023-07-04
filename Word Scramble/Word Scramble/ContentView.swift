@@ -21,14 +21,14 @@ struct ContentView: View {
                         .frame(maxWidth: 430)
                         .font(.headline.bold())
                         .multilineTextAlignment(.center)
-                    HStack{
-                        TextField("Enter your word", text: $newWord)
-                            .textFieldStyle(.roundedBorder)
-                            .textInputAutocapitalization(.none)
-                        Image(systemName: "\(newWord.count).circle")
-                    }
                 }
                 .listRowBackground(Color(CGColor(red: 240, green: 246, blue: 246, alpha: 0)))
+                
+                HStack{
+                    TextField("Enter your word", text: $newWord)
+                        .textInputAutocapitalization(.never)
+                    Image(systemName: "\(newWord.count).circle")
+                }
                 
                 Section("Typed Words:") {
                     ForEach(usedWord, id: \.self) { word in
@@ -43,16 +43,16 @@ struct ContentView: View {
             .toolbar {
                 if gameIsOn {
                     Button("New Word", action: {
-                        
+                        displayedWord()
                     })
                 } else {
                     Button("Start the Game", action: {
                         gameIsOn = true
+                        displayedWord()
                     })
                 }
             }
             .onSubmit(addNewWord)
-            .onAppear(perform: startTheGame)
         }
     }
     
@@ -66,7 +66,7 @@ struct ContentView: View {
         newWord = ""
     }
     
-    func startTheGame() {
+    func displayedWord() {
         if let startWordURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
             if let contentFile = try? String(contentsOf: startWordURL) {
                 let allWord = contentFile.components(separatedBy: "\n")
