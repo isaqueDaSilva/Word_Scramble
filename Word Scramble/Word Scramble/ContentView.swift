@@ -57,6 +57,11 @@ struct ContentView: View {
                 }
             }
             .onSubmit(addNewWord)
+            .alert(alertTitle, isPresented: $showingAlert) {
+                Button("OK", role: .cancel, action: { })
+            } message: {
+                Text(alertMessage)
+            }
         }
     }
     
