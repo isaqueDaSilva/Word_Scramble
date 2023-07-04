@@ -134,7 +134,7 @@ struct ContentView: View {
         } else if newWord.count >= 6 && newWord.count < 8 {
             points += 4
         } else if newWord.count >= 8  {
-            points += 10
+            points += 8
         }
         
         newWord = ""
