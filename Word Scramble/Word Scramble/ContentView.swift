@@ -64,6 +64,20 @@ struct ContentView: View {
         let lowercaseAnswer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         guard lowercaseAnswer.count > 0 else { return }
         
+        guard isOriginal(word: lowercaseAnswer) else {
+            alertError(title: "Word already used!", message: "It is not allowed to use two identical words as an answer!")
+            return
+        }
+        
+        guard isPossible(word: lowercaseAnswer) else {
+            alertError(title: "Word not recognized", message: "It is not possible to spell this word from \"\(rootWord)\"!")
+            return
+        }
+        
+        guard isReal(word: lowercaseAnswer) else {
+            alertError(title: "Unavailable word", message: "This word is unavailable in this language or does not exist!")
+            return
+        }
         withAnimation {
             usedWord.insert(lowercaseAnswer, at: 0)
         }
