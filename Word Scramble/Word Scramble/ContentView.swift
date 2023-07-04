@@ -16,7 +16,6 @@ struct ContentView: View {
     @State private var showingAlert = false
     @State private var alertTitle = ""
     @State private var alertMessage = ""
-    
     @State private var points = 0
     
     var body: some View {
@@ -57,7 +56,8 @@ struct ContentView: View {
             .toolbar {
                 if gameIsOn {
                     Button("New Word", action: {
-                        rootWord.removeAll()
+                        usedWord.removeAll()
+                        points = 0
                         displayedWord()
                     })
                 } else {
