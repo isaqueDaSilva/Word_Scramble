@@ -21,15 +21,20 @@ struct ContentView: View {
                         .frame(maxWidth: 430)
                         .font(.headline.bold())
                         .multilineTextAlignment(.center)
-                    
-                    TextField("Enter your word", text: $newWord)
-                        .textFieldStyle(.roundedBorder)
+                    HStack{
+                        TextField("Enter your word", text: $newWord)
+                            .textFieldStyle(.roundedBorder)
+                        Image(systemName: "\(newWord.count).circle")
+                    }
                 }
                 .listRowBackground(Color(CGColor(red: 240, green: 246, blue: 246, alpha: 0)))
                 
                 Section("Typed Words:") {
                     ForEach(usedWord, id: \.self) { word in
-                        Text(word)
+                        HStack {
+                            Image(systemName: "\(word.count).circle.fill")
+                            Text(word)
+                        }
                     }
                 }
             }
