@@ -17,21 +17,31 @@ struct ContentView: View {
     @State private var alertTitle = ""
     @State private var alertMessage = ""
     
+    @State private var points = 0
+    
     var body: some View {
         NavigationView {
             List {
-                Section {
+                VStack {
+                    Spacer()
+                    
                     Text(gameIsOn ? rootWord : "Press the Start Button!")
                         .frame(maxWidth: 430)
                         .font(.headline.bold())
                         .multilineTextAlignment(.center)
-                        .listRowBackground(Color(CGColor(red: 240, green: 246, blue: 246, alpha: 0)))
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundColor(.gray)
+                    
+                    Spacer()
                     
                     HStack{
                         TextField("Enter your word", text: $newWord)
                             .textInputAutocapitalization(.never)
                         Image(systemName: "\(newWord.count).circle")
                     }
+                    
+                    Spacer()
                 }
                 
                 Section("Typed Words:") {
@@ -47,6 +57,7 @@ struct ContentView: View {
             .toolbar {
                 if gameIsOn {
                     Button("New Word", action: {
+                        rootWord.removeAll()
                         displayedWord()
                     })
                 } else {
@@ -55,6 +66,13 @@ struct ContentView: View {
                         displayedWord()
                     })
                 }
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .bottomBar, content: {
+                    Text("Points: \(points)")
+                        .font(.headline.bold())
+                        .foregroundColor(.gray)
+                })
             }
             .onSubmit(addNewWord)
             .alert(alertTitle, isPresented: $showingAlert) {
@@ -67,7 +85,13 @@ struct ContentView: View {
     
     func addNewWord() {
         let lowercaseAnswer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        guard lowercaseAnswer.count > 3 else {
+        
+        guard gameIsOn else {
+            alertError(title: "Game not started", message: "Start the game to be able to answer")
+            return
+        }
+        
+        guard lowercaseAnswer.count >= 3 else {
             alertError(title: "Short Word", message: "That word seems too short!\nChoose a bigger word!")
             return
         }
@@ -76,6 +100,7 @@ struct ContentView: View {
             alertError(title: "Same word as the orginal", message: "Choose a word that is different from the original!")
             return
         }
+        
         guard isOriginal(word: lowercaseAnswer) else {
             alertError(title: "Word already used!", message: "It is not allowed to use two identical words as an answer!")
             return
@@ -90,9 +115,19 @@ struct ContentView: View {
             alertError(title: "Unavailable word", message: "This word is unavailable in this language or does not exist!")
             return
         }
+        
         withAnimation {
             usedWord.insert(lowercaseAnswer, at: 0)
         }
+        
+        if newWord.count >= 3 && newWord.count < 6 {
+            points += 2
+        } else if newWord.count >= 6 && newWord.count < 8 {
+            points += 4
+        } else if newWord.count >= 8  {
+            points += 10
+        }
+        
         newWord = ""
     }
     
