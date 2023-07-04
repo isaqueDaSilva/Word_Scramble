@@ -44,7 +44,7 @@ struct ContentView: View {
                             Button(action: {
                                 newWord.removeAll()
                             }, label: {
-                                Image(systemName: "x.circle")
+                                Image(systemName: "x.circle.fill")
                                     .foregroundColor(.black)
                             })
                         }
@@ -96,7 +96,7 @@ struct ContentView: View {
         let lowercaseAnswer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         
         guard gameIsOn else {
-            alertError(title: "Game not started", message: "Start the game to be able to answer")
+            alertError(title: "Game not started", message: "Start the game to be able to answer!")
             return
         }
         
