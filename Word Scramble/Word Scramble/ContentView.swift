@@ -16,56 +16,44 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             List {
-                Section {
-                    VStack {
-                        Text(rootWord == "" ? "Press start" : rootWord)
-                            .font(.title2.bold())
-                            .frame(maxWidth: 430)
-                    }
-                    .listRowBackground(Color(CGColor(red: 240, green: 240, blue: 246, alpha: 0)))
+                VStack {
+                    Text(gameIsOn ? rootWord : "Press the Start Button!")
+                        .frame(maxWidth: 430)
+                        .font(.headline.bold())
+                        .multilineTextAlignment(.center)
                     
                     TextField("Enter your word", text: $newWord)
-                        .textInputAutocapitalization(.none)
+                        .textFieldStyle(.roundedBorder)
                 }
+                .listRowBackground(Color(CGColor(red: 240, green: 246, blue: 246, alpha: 0)))
                 
                 Section("Typed Words:") {
                     ForEach(usedWord, id: \.self) { word in
-                        HStack{
-                            Image(systemName: "\(word.count).circle.fill")
-                            Text(word)
-                        }
+                        Text(word)
                     }
                 }
             }
             .navigationTitle("Word Scramble")
             .toolbar {
-                Button("Start Game", action: {
-                    gameIsOn = true
-                })
+                if gameIsOn {
+                    Button("New Word", action: {
+                        
+                    })
+                } else {
+                    Button("Start the Game", action: {
+                        gameIsOn = true
+                    })
+                }
             }
-        }.onSubmit(addNewWord)
+            .onSubmit(addNewWord)
+        }
     }
     
     func addNewWord() {
-        let answer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        guard answer.count > 0 else { return }
-        
-        withAnimation {
-            usedWord.insert(answer, at: 0)
-        }
+        let lowercaseAnswer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        guard lowercaseAnswer.count > 0 else { return }
+        usedWord.insert(lowercaseAnswer, at: 0)
         newWord = ""
-    }
-    
-    func startGame() {
-        if let startURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
-            if let content = try? String(contentsOf: startURL) {
-                let allWords = content.components(separatedBy: "\n")
-                rootWord = allWords.randomElement() ?? "Unknown Value"
-                return
-            }
-        }
-        
-        fatalError("Sorry, but could not load start.txt from bundle.")
     }
 }
 
