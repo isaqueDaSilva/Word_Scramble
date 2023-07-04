@@ -37,9 +37,18 @@ struct ContentView: View {
                     HStack{
                         TextField("Enter your word", text: $newWord)
                             .textInputAutocapitalization(.never)
+                        
                         Image(systemName: "\(newWord.count).circle")
+                        
+                        if newWord.count > 0 {
+                            Button(action: {
+                                newWord.removeAll()
+                            }, label: {
+                                Image(systemName: "x.circle")
+                                    .foregroundColor(.black)
+                            })
+                        }
                     }
-                    
                     Spacer()
                 }
                 
