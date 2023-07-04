@@ -67,8 +67,15 @@ struct ContentView: View {
     
     func addNewWord() {
         let lowercaseAnswer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        guard lowercaseAnswer.count > 0 else { return }
+        guard lowercaseAnswer.count > 3 else {
+            alertError(title: "Short Word", message: "That word seems too short!\nChoose a bigger word!")
+            return
+        }
         
+        guard newWord != rootWord else {
+            alertError(title: "Same word as the orginal", message: "Choose a word that is different from the original!")
+            return
+        }
         guard isOriginal(word: lowercaseAnswer) else {
             alertError(title: "Word already used!", message: "It is not allowed to use two identical words as an answer!")
             return
