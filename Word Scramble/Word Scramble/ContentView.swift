@@ -24,6 +24,7 @@ struct ContentView: View {
                     HStack{
                         TextField("Enter your word", text: $newWord)
                             .textFieldStyle(.roundedBorder)
+                            .textInputAutocapitalization(.none)
                         Image(systemName: "\(newWord.count).circle")
                     }
                 }
@@ -51,14 +52,29 @@ struct ContentView: View {
                 }
             }
             .onSubmit(addNewWord)
+            .onAppear(perform: startTheGame)
         }
     }
     
     func addNewWord() {
         let lowercaseAnswer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         guard lowercaseAnswer.count > 0 else { return }
-        usedWord.insert(lowercaseAnswer, at: 0)
+        
+        withAnimation {
+            usedWord.insert(lowercaseAnswer, at: 0)
+        }
         newWord = ""
+    }
+    
+    func startTheGame() {
+        if let startWordURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
+            if let contentFile = try? String(contentsOf: startWordURL) {
+                let allWord = contentFile.components(separatedBy: "\n")
+                rootWord = allWord.randomElement() ?? "Unknown Value"
+                return
+            }
+        }
+        fatalError("Unable to load file start.txt from bundle.")
     }
 }
 
