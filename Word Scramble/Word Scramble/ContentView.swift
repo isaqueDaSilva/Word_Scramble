@@ -18,6 +18,7 @@ struct ContentView: View {
     @State private var alertMessage = ""
     @State private var points = 0
     
+    @State private var startButtonAnimation: Double = 2
     var body: some View {
         NavigationView {
             List {
@@ -51,12 +52,13 @@ struct ContentView: View {
                     }
                     Spacer()
                 }
-                
-                Section("Typed Words:") {
-                    ForEach(usedWord, id: \.self) { word in
-                        HStack {
-                            Image(systemName: "\(word.count).circle.fill")
-                            Text(word)
+                if !usedWord.isEmpty {
+                    Section("Typed Words:") {
+                        ForEach(usedWord, id: \.self) { word in
+                            HStack {
+                                Image(systemName: "\(word.count).circle.fill")
+                                Text(word)
+                            }
                         }
                     }
                 }
