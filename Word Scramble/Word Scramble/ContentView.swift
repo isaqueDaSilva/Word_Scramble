@@ -7,37 +7,6 @@
 
 import SwiftUI
 
-struct RoleView: View {
-    
-    var body: some View {
-        VStack {
-            Text("Roles:")
-                .font(.title.bold())
-            
-            Text("In this game you will be given a random word with 8 letters, and from the letters of the word you must write words that contain those letters!")
-                .font(.subheadline.bold())
-                .multilineTextAlignment(.center)
-                .frame(width: 300)
-        }
-        .padding(10)
-        
-        VStack {
-            Text("🚨 But attention 🚨")
-                .font(.title.bold())
-            
-            Text( """
-- It is not valid to use words that contain less than 3 words;
-- The repetition of words is not valid;
-- The same word that is being displayed is not valid;
-- Words that do not exist in your language are not valid;
-"""
-            )
-            .font(.subheadline.bold())
-            .frame(width: 300)
-        }
-    }
-}
-
 struct ContentView: View {
     @State private var gameIsOn = false
     @State private var usedWord = [String]()
@@ -50,6 +19,43 @@ struct ContentView: View {
     @State private var points = 0
     
     @State private var showingRoles = false
+    
+    let roles = [
+        "- It is not valid to use words that contain less than 3 words;",
+        "- The repetition of words is not valid;",
+        "- The same word that is being displayed is not valid;",
+        "- Words that do not exist in your language are not valid;"
+    ]
+    
+    @ViewBuilder var roleView: some View {
+        VStack {
+            VStack {
+                Text("Roles:")
+                    .font(.title.bold())
+                
+                Text("In this game you will be given a random word with 8 letters, and from the letters of the word you must write words that contain those letters!")
+                    .font(.subheadline.bold())
+                    .multilineTextAlignment(.center)
+                    .frame(width: 300)
+            }
+            .padding(10)
+            
+            VStack {
+                Text("🚨 But Attention 🚨:")
+                    .font(.title.bold())
+                
+                Text("\(roles[0])\n\(roles[1])\n\(roles[2])\n\(roles[3])")
+                    .font(.subheadline.bold())
+            }
+            .frame(width: 300)
+            
+            Button("Start", action: {
+                gameIsOn = true
+                displayedWord()
+            })
+            .buttonStyle(.borderedProminent)
+        }
+    }
     
     @ViewBuilder var gameView: some View {
         List {
@@ -80,8 +86,9 @@ struct ContentView: View {
                                 .foregroundColor(.black)
                         })
                     }
-                    Spacer()
                 }
+                Spacer()
+                
                 if !usedWord.isEmpty {
                     Section("Typed Words:") {
                         ForEach(usedWord, id: \.self) { word in
@@ -137,7 +144,7 @@ struct ContentView: View {
                             .multilineTextAlignment(.center)
                         if showingRoles == false {
                             Button("Show Roles", action: {
-                                withAnimation(.interpolatingSpring(stiffness: 3, damping: 1)) {
+                                withAnimation {
                                     showingRoles = true
                                 }
                             })
@@ -145,23 +152,11 @@ struct ContentView: View {
                             .padding(15)
                         }
                         
-                        if showingRoles {
-                            VStack {
-                                RoleView()
-                                Button("Start", action: {
-                                    withAnimation {
-                                        gameIsOn = true
-                                        displayedWord()
-                                    }
-                                })
-                                .buttonStyle(.borderedProminent)
-                            }
-                            .frame(maxWidth: 350)
-                            .padding(.vertical, 20)
+                        roleView
+                            .frame(width: showingRoles ? 350 : 0, height: showingRoles ? 400 : 0)
                             .background(.thinMaterial)
                             .cornerRadius(20)
                             .shadow(radius: 10)
-                        }
                     }
                 } else {
                     gameView
