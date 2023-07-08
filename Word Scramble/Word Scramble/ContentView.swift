@@ -18,80 +18,102 @@ struct ContentView: View {
     @State private var alertMessage = ""
     @State private var points = 0
     
+    @State private var showingRoles = false
+    
     @ViewBuilder var gameView: some View {
-        VStack {
-            Text(gameIsOn ? rootWord : "Press the Start Button!")
-                .frame(maxWidth: 430)
-                .font(.headline.bold())
-                .multilineTextAlignment(.center)
-            
-            Rectangle()
-                .frame(height: 1)
-                .foregroundColor(.gray)
-            
-            Spacer()
-            
-            HStack{
-                TextField("Enter your word", text: $newWord)
-                    .textInputAutocapitalization(.never)
+        List {
+            VStack {
+                Spacer()
                 
-                Image(systemName: "\(newWord.count).circle")
+                Text(gameIsOn ? rootWord : "Press the Start Button!")
+                    .frame(maxWidth: 430)
+                    .font(.headline.bold())
+                    .multilineTextAlignment(.center)
+                Rectangle()
+                    .frame(height: 1)
+                    .foregroundColor(.gray)
                 
-                if newWord.count > 0 {
-                    Button(action: {
-                        newWord.removeAll()
-                    }, label: {
-                        Image(systemName: "x.circle.fill")
-                            .foregroundColor(.black)
-                    })
+                Spacer()
+                
+                HStack{
+                    TextField("Enter your word", text: $newWord)
+                        .textInputAutocapitalization(.never)
+                    
+                    Image(systemName: "\(newWord.count).circle")
+                    
+                    if newWord.count > 0 {
+                        Button(action: {
+                            newWord.removeAll()
+                        }, label: {
+                            Image(systemName: "x.circle.fill")
+                                .foregroundColor(.black)
+                        })
+                    }
                 }
-                
-                if !newWord.isEmpty {
-                    Section("Typed Words") {
-                        ForEach(usedWord, id: \.self) { word in
-                            HStack {
-                                Image(systemName: "\(newWord.count).circle")
-                                Text(word)
-                            }
+                Spacer()
+            }
+            if !usedWord.isEmpty {
+                Section("Typed Words:") {
+                    ForEach(usedWord, id: \.self) { word in
+                        HStack {
+                            Image(systemName: "\(word.count).circle.fill")
+                            Text(word)
                         }
                     }
                 }
             }
         }
+        .navigationTitle("Word Scramble")
+        .toolbar {
+            if gameIsOn {
+                Button("New Word", action: {
+                    usedWord.removeAll()
+                    points = 0
+                    displayedWord()
+                })
+            } else {
+                Button("Start the Game", action: {
+                    gameIsOn = true
+                    displayedWord()
+                })
+            }
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .bottomBar, content: {
+                Text("Points: \(points)")
+                    .font(.headline.bold())
+                    .foregroundColor(.gray)
+            })
+        }
+        .onSubmit(addNewWord)
+        .alert(alertTitle, isPresented: $showingAlert) {
+            Button("OK", role: .cancel, action: { })
+        } message: {
+            Text(alertMessage)
+        }
     }
     
     var body: some View {
         NavigationView {
-            List {
-                
-            }
-            .navigationTitle("Word Scramble")
-            .toolbar {
-                if gameIsOn {
-                    Button("New Word", action: {
-                        usedWord.removeAll()
-                        points = 0
-                        displayedWord()
-                    })
-                } else {
-                    Button("Start the Game", action: {
-                        gameIsOn = true
-                        displayedWord()
-                    })
+            ZStack {
+                if gameIsOn == false {
+                    VStack {
+                        Text("Welcome to Word Scramble")
+                            .font(.title.bold())
+                            .foregroundColor(.blue)
+                            .padding(5)
+                        Text("A fun word game that will make sure you never get bored again 😉")
+                            .frame(width: 350)
+                            .font(.title3.bold())
+                            .multilineTextAlignment(.center)
+                        
+                        Button("Show Roles", action: {
+                            
+                        })
+                        .buttonStyle(.borderedProminent)
+                        .padding(15)
+                    }
                 }
-            }
-            .toolbar {
-                ToolbarItemGroup(placement: .bottomBar, content: {
-                    Text("Points: \(points)")
-                        .font(.headline.bold())
-                        .foregroundColor(.gray)
-                })
-            }
-            .onSubmit(addNewWord)
-            .alert(alertTitle, isPresented: $showingAlert) {
-                Button("OK", role: .cancel, action: { })
-            } message: {
-                Text(alertMessage)
             }
         }
     }
