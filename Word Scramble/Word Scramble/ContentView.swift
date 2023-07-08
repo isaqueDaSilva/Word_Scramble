@@ -18,50 +18,52 @@ struct ContentView: View {
     @State private var alertMessage = ""
     @State private var points = 0
     
-    @State private var startButtonAnimation: Double = 2
-    var body: some View {
-        NavigationView {
-            List {
-                VStack {
-                    Spacer()
-                    
-                    Text(gameIsOn ? rootWord : "Press the Start Button!")
-                        .frame(maxWidth: 430)
-                        .font(.headline.bold())
-                        .multilineTextAlignment(.center)
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(.gray)
-                    
-                    Spacer()
-                    
-                    HStack{
-                        TextField("Enter your word", text: $newWord)
-                            .textInputAutocapitalization(.never)
-                        
-                        Image(systemName: "\(newWord.count).circle")
-                        
-                        if newWord.count > 0 {
-                            Button(action: {
-                                newWord.removeAll()
-                            }, label: {
-                                Image(systemName: "x.circle.fill")
-                                    .foregroundColor(.black)
-                            })
-                        }
-                    }
-                    Spacer()
+    @ViewBuilder var gameView: some View {
+        VStack {
+            Text(gameIsOn ? rootWord : "Press the Start Button!")
+                .frame(maxWidth: 430)
+                .font(.headline.bold())
+                .multilineTextAlignment(.center)
+            
+            Rectangle()
+                .frame(height: 1)
+                .foregroundColor(.gray)
+            
+            Spacer()
+            
+            HStack{
+                TextField("Enter your word", text: $newWord)
+                    .textInputAutocapitalization(.never)
+                
+                Image(systemName: "\(newWord.count).circle")
+                
+                if newWord.count > 0 {
+                    Button(action: {
+                        newWord.removeAll()
+                    }, label: {
+                        Image(systemName: "x.circle.fill")
+                            .foregroundColor(.black)
+                    })
                 }
-                if !usedWord.isEmpty {
-                    Section("Typed Words:") {
+                
+                if !newWord.isEmpty {
+                    Section("Typed Words") {
                         ForEach(usedWord, id: \.self) { word in
                             HStack {
-                                Image(systemName: "\(word.count).circle.fill")
+                                Image(systemName: "\(newWord.count).circle")
                                 Text(word)
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+    
+    var body: some View {
+        NavigationView {
+            List {
+                
             }
             .navigationTitle("Word Scramble")
             .toolbar {
