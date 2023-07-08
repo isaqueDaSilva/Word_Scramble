@@ -7,6 +7,37 @@
 
 import SwiftUI
 
+struct RoleView: View {
+    
+    var body: some View {
+        VStack {
+            Text("Roles:")
+                .font(.title.bold())
+            
+            Text("In this game you will be given a random word with 8 letters, and from the letters of the word you must write words that contain those letters!")
+                .font(.subheadline.bold())
+                .multilineTextAlignment(.center)
+                .frame(width: 300)
+        }
+        .padding(10)
+        
+        VStack {
+            Text("🚨 But attention 🚨")
+                .font(.title.bold())
+            
+            Text( """
+- It is not valid to use words that contain less than 3 words;
+- The repetition of words is not valid;
+- The same word that is being displayed is not valid;
+- Words that do not exist in your language are not valid;
+"""
+            )
+            .font(.subheadline.bold())
+            .frame(width: 300)
+        }
+    }
+}
+
 struct ContentView: View {
     @State private var gameIsOn = false
     @State private var usedWord = [String]()
@@ -49,21 +80,21 @@ struct ContentView: View {
                                 .foregroundColor(.black)
                         })
                     }
+                    Spacer()
                 }
-                Spacer()
-            }
-            if !usedWord.isEmpty {
-                Section("Typed Words:") {
-                    ForEach(usedWord, id: \.self) { word in
-                        HStack {
-                            Image(systemName: "\(word.count).circle.fill")
-                            Text(word)
+                if !usedWord.isEmpty {
+                    Section("Typed Words:") {
+                        ForEach(usedWord, id: \.self) { word in
+                            HStack {
+                                Image(systemName: "\(word.count).circle.fill")
+                                Text(word)
+                            }
                         }
                     }
                 }
             }
         }
-        .navigationTitle("Word Scramble")
+        .navigationTitle(gameIsOn ? "Word Scramble" : "")
         .toolbar {
             if gameIsOn {
                 Button("New Word", action: {
@@ -71,19 +102,16 @@ struct ContentView: View {
                     points = 0
                     displayedWord()
                 })
-            } else {
-                Button("Start the Game", action: {
-                    gameIsOn = true
-                    displayedWord()
-                })
             }
         }
         .toolbar {
-            ToolbarItemGroup(placement: .bottomBar, content: {
-                Text("Points: \(points)")
-                    .font(.headline.bold())
-                    .foregroundColor(.gray)
-            })
+            if gameIsOn {
+                ToolbarItemGroup(placement: .bottomBar, content: {
+                    Text("Points: \(points)")
+                        .font(.headline.bold())
+                        .foregroundColor(.gray)
+                })
+            }
         }
         .onSubmit(addNewWord)
         .alert(alertTitle, isPresented: $showingAlert) {
@@ -97,6 +125,7 @@ struct ContentView: View {
         NavigationView {
             ZStack {
                 if gameIsOn == false {
+                    gameView.blur(radius: 10)
                     VStack {
                         Text("Welcome to Word Scramble")
                             .font(.title.bold())
@@ -106,13 +135,36 @@ struct ContentView: View {
                             .frame(width: 350)
                             .font(.title3.bold())
                             .multilineTextAlignment(.center)
+                        if showingRoles == false {
+                            Button("Show Roles", action: {
+                                withAnimation(.interpolatingSpring(stiffness: 3, damping: 1)) {
+                                    showingRoles = true
+                                }
+                            })
+                            .buttonStyle(.borderedProminent)
+                            .padding(15)
+                        }
                         
-                        Button("Show Roles", action: {
-                            
-                        })
-                        .buttonStyle(.borderedProminent)
-                        .padding(15)
+                        if showingRoles {
+                            VStack {
+                                RoleView()
+                                Button("Start", action: {
+                                    withAnimation {
+                                        gameIsOn = true
+                                        displayedWord()
+                                    }
+                                })
+                                .buttonStyle(.borderedProminent)
+                            }
+                            .frame(maxWidth: 350)
+                            .padding(.vertical, 20)
+                            .background(.thinMaterial)
+                            .cornerRadius(20)
+                            .shadow(radius: 10)
+                        }
                     }
+                } else {
+                    gameView
                 }
             }
         }
@@ -120,11 +172,6 @@ struct ContentView: View {
     
     func addNewWord() {
         let lowercaseAnswer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        guard gameIsOn else {
-            alertError(title: "Game not started", message: "Start the game to be able to answer!")
-            return
-        }
         
         guard lowercaseAnswer.count >= 3 else {
             alertError(title: "Short Word", message: "That word seems too short!\nChoose a bigger word!")
