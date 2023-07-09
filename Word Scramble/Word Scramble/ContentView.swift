@@ -30,10 +30,8 @@ struct ContentView: View {
     @ViewBuilder var roleView: some View {
         VStack {
             VStack {
-                Text("Roles:")
-                    .font(.title.bold())
                 
-                Text("In this game you will be given a random word with 8 letters, and from the letters of the word you must write words that contain those letters!")
+                Text("In this game, you will be given a random word with 8 letters and your challenge will be to write the maximum number of words that contain the letters of the original word!")
                     .font(.subheadline.bold())
                     .multilineTextAlignment(.center)
                     .frame(width: 300)
@@ -41,7 +39,7 @@ struct ContentView: View {
             .padding(10)
             
             VStack {
-                Text("🚨 But Attention 🚨:")
+                Text("Roles:")
                     .font(.title.bold())
                 
                 Text("\(roles[0])\n\(roles[1])\n\(roles[2])\n\(roles[3])")
@@ -83,7 +81,7 @@ struct ContentView: View {
                                 newWord.removeAll()
                             }, label: {
                                 Image(systemName: "x.circle.fill")
-                                
+                                    .foregroundColor(.black)
                             })
                         }
                     }
@@ -134,14 +132,17 @@ struct ContentView: View {
             if gameIsOn == false {
                 gameView.blur(radius: 10)
                 VStack {
-                    Text("Welcome to Word Scramble")
+                    Text(showingRoles ? "Word Scramble" : "Welcome to Word Scramble")
                         .font(.title.bold())
                         .foregroundColor(.blue)
                         .padding(5)
-                    Text("A fun word game that will make sure you never get bored again 😉")
+                        .transition(.asymmetric(insertion: .scale, removal: .opacity))
+                    
+                    Text(showingRoles ? "" : "A fun word game that will make sure you never get bored again 😉")
                         .frame(width: 350)
                         .font(.title3.bold())
                         .multilineTextAlignment(.center)
+                    
                     if showingRoles == false {
                         Button("Show Roles", action: {
                             withAnimation {
@@ -169,26 +170,31 @@ struct ContentView: View {
         
         guard lowercaseAnswer.count >= 3 else {
             alertError(title: "Short Word", message: "That word seems too short!\nChoose a bigger word!")
+            newWord = ""
             return
         }
         
         guard newWord != rootWord else {
             alertError(title: "Same word as the orginal", message: "Choose a word that is different from the original!")
+            newWord = ""
             return
         }
         
         guard isOriginal(word: lowercaseAnswer) else {
             alertError(title: "Word already used!", message: "It is not allowed to use two identical words as an answer!")
+            newWord = ""
             return
         }
         
         guard isPossible(word: lowercaseAnswer) else {
             alertError(title: "Word not recognized", message: "It is not possible to spell this word from \"\(rootWord)\"!")
+            newWord = ""
             return
         }
         
         guard isReal(word: lowercaseAnswer) else {
             alertError(title: "Unavailable word", message: "This word is unavailable in this language or does not exist!")
+            newWord = ""
             return
         }
         
