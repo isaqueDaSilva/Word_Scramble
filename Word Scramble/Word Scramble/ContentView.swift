@@ -58,109 +58,108 @@ struct ContentView: View {
     }
     
     @ViewBuilder var gameView: some View {
-        List {
-            VStack {
-                Spacer()
-                
-                Text(gameIsOn ? rootWord : "Press the Start Button!")
-                    .frame(maxWidth: 430)
-                    .font(.headline.bold())
-                    .multilineTextAlignment(.center)
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundColor(.gray)
-                
-                Spacer()
-                
-                HStack{
-                    TextField("Enter your word", text: $newWord)
-                        .textInputAutocapitalization(.never)
+        NavigationView {
+            List {
+                VStack {
+                    Spacer()
                     
-                    Image(systemName: "\(newWord.count).circle")
+                    Text(rootWord)
+                        .font(.title3.bold())
+                        .frame(maxWidth: 430)
                     
-                    if newWord.count > 0 {
-                        Button(action: {
-                            newWord.removeAll()
-                        }, label: {
-                            Image(systemName: "x.circle.fill")
-                                .foregroundColor(.black)
-                        })
+                    Rectangle()
+                        .frame(width: 300, height: 1)
+                        .foregroundColor(.gray)
+                    
+                    Spacer()
+                    
+                    HStack {
+                        TextField("Enter your word", text: $newWord)
+                            .textInputAutocapitalization(.never)
+                        Image(systemName: "\(newWord.count).circle")
+                        
+                        if newWord.count > 0 {
+                            Button(action: {
+                                newWord.removeAll()
+                            }, label: {
+                                Image(systemName: "x.circle.fill")
+                                
+                            })
+                        }
                     }
+                    Spacer()
                 }
-                Spacer()
                 
                 if !usedWord.isEmpty {
-                    Section("Typed Words:") {
+                    Section("Typed Word") {
                         ForEach(usedWord, id: \.self) { word in
                             HStack {
-                                Image(systemName: "\(word.count).circle.fill")
+                                Image(systemName: "\(usedWord.count).circle.fill")
                                 Text(word)
                             }
                         }
                     }
                 }
             }
-        }
-        .navigationTitle(gameIsOn ? "Word Scramble" : "")
-        .toolbar {
-            if gameIsOn {
-                Button("New Word", action: {
-                    usedWord.removeAll()
-                    points = 0
-                    displayedWord()
-                })
+            .navigationTitle(gameIsOn ? "Word Scramble" : "")
+            .toolbar {
+                if gameIsOn {
+                    Button("New Word", action: {
+                        usedWord.removeAll()
+                        points = 0
+                        displayedWord()
+                    })
+                }
             }
-        }
-        .toolbar {
-            if gameIsOn {
-                ToolbarItemGroup(placement: .bottomBar, content: {
-                    Text("Points: \(points)")
-                        .font(.headline.bold())
-                        .foregroundColor(.gray)
-                })
+            .toolbar {
+                if gameIsOn {
+                    ToolbarItemGroup(placement: .bottomBar, content: {
+                        Text("Points: \(points)")
+                            .font(.headline.bold())
+                            .foregroundColor(.gray)
+                    })
+                }
             }
-        }
-        .onSubmit(addNewWord)
-        .alert(alertTitle, isPresented: $showingAlert) {
-            Button("OK", role: .cancel, action: { })
-        } message: {
-            Text(alertMessage)
+            .onSubmit(addNewWord)
+            .alert(alertTitle, isPresented: $showingAlert) {
+                Button("OK", role: .cancel, action: { })
+            } message: {
+                Text(alertMessage)
+            }
         }
     }
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                if gameIsOn == false {
-                    gameView.blur(radius: 10)
-                    VStack {
-                        Text("Welcome to Word Scramble")
-                            .font(.title.bold())
-                            .foregroundColor(.blue)
-                            .padding(5)
-                        Text("A fun word game that will make sure you never get bored again 😉")
-                            .frame(width: 350)
-                            .font(.title3.bold())
-                            .multilineTextAlignment(.center)
-                        if showingRoles == false {
-                            Button("Show Roles", action: {
-                                withAnimation {
-                                    showingRoles = true
-                                }
-                            })
-                            .buttonStyle(.borderedProminent)
-                            .padding(15)
-                        }
-                        
-                        roleView
-                            .frame(width: showingRoles ? 350 : 0, height: showingRoles ? 400 : 0)
-                            .background(.thinMaterial)
-                            .cornerRadius(20)
-                            .shadow(radius: 10)
+        ZStack {
+            if gameIsOn == false {
+                gameView.blur(radius: 10)
+                VStack {
+                    Text("Welcome to Word Scramble")
+                        .font(.title.bold())
+                        .foregroundColor(.blue)
+                        .padding(5)
+                    Text("A fun word game that will make sure you never get bored again 😉")
+                        .frame(width: 350)
+                        .font(.title3.bold())
+                        .multilineTextAlignment(.center)
+                    if showingRoles == false {
+                        Button("Show Roles", action: {
+                            withAnimation {
+                                showingRoles = true
+                            }
+                        })
+                        .buttonStyle(.borderedProminent)
+                        .padding(15)
                     }
-                } else {
-                    gameView
+                    
+                    roleView
+                        .frame(width: 350, height: showingRoles ? 400 : 0)
+                        .background(.thinMaterial)
+                        .cornerRadius(20)
+                        .shadow(radius: 10)
                 }
+            } else {
+                gameView
             }
         }
     }
