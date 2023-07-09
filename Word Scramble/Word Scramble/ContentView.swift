@@ -46,12 +46,16 @@ struct ContentView: View {
                     .font(.subheadline.bold())
             }
             .frame(width: 300)
-            
-            Button("Start", action: {
-                gameIsOn = true
-                displayedWord()
-            })
-            .buttonStyle(.borderedProminent)
+            .padding(10)
+            if gameIsOn == false {
+                Button("Start", action: {
+                    withAnimation {
+                        gameIsOn = true
+                        displayedWord()
+                    }
+                })
+                .buttonStyle(.borderedProminent)
+            }
         }
     }
     
