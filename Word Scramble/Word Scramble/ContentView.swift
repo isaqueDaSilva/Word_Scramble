@@ -21,11 +21,11 @@ struct ContentView: View {
     @State private var showingRoles = false
     
     let roles = [
-        "- It is not valid to use words that contain less than 3 words;",
+        "- It's not valid to use words that contain less than 3 words;",
         "- The repetition of words is not valid;",
         "- The same word that is being displayed is not valid;",
         "- Words that do not exist in your language are not valid;",
-        "- You get 2 points for every word that contains 3-5 letters, 4 points if it contains between 6-7 and 8 points for cases of more than 8 letters!"
+        "- You get 2 points for every word that contains 3-5 letters, 4 points if it contains between 6-7 and 8 points for cases of more than 8 letters."
     ]
     
     @ViewBuilder var roleView: some View {
