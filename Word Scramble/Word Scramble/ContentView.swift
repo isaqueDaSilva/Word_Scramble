@@ -54,7 +54,7 @@ struct ContentView: View {
             
             if gameIsOn == false {
                 Button("Start", action: {
-                    withAnimation {
+                    withAnimation(.easeOut(duration: 0.5)) {
                         gameIsOn = true
                         displayedWord()
                     }
@@ -121,11 +121,11 @@ struct ContentView: View {
             }
             .toolbar {
                 if gameIsOn {
-                    ToolbarItemGroup(placement: .bottomBar, content: {
+                    ToolbarItemGroup(placement: .bottomBar) {
                         Text("Points: \(points)")
                             .font(.headline.bold())
                             .foregroundColor(.gray)
-                    })
+                    }
                 }
             }
             .onSubmit(addNewWord)
@@ -140,7 +140,6 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             if gameIsOn == false {
-                gameView.blur(radius: 10)
                 VStack {
                     Text(showingRoles ? "Word Scramble" : "Welcome to Word Scramble")
                         .font(.title.bold())
@@ -169,9 +168,9 @@ struct ContentView: View {
                         .cornerRadius(20)
                         .shadow(radius: 10)
                 }
-            } else {
-                gameView
             }
+            gameView
+                .frame(maxWidth: .infinity, maxHeight: gameIsOn ? .infinity : 0)
         }
     }
     
